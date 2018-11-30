@@ -1,3 +1,4 @@
+credentials.json
 *.sw[op]
 *.pyc
 .ipynb_checkpoints/
