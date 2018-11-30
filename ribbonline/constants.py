@@ -1,0 +1,2 @@
+EMOJI_RIBBON = '🎗'
+EMOJI_FLAG = '🇪🇸'
