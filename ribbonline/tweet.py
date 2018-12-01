@@ -9,10 +9,10 @@ class Tweet(object):
     def __init__(self, raw_data):
         # self.raw_data = raw_data
         self.id = raw_data['id']
-        self.text = raw_data['text']
-        self.username = raw_data['user']['name']
-        self.user_description = raw_data['user']['description']
-        self.user_id = raw_data['user']['id']
+        self.text = raw_data['html']
+        self.username = raw_data['fullname']
+        self.user_description = ''  # For now
+        #  self.user_id = raw_data['user']['id']
         # self.date = dateparser.parse(raw_data['created_at'].replace('+0000 ',''))
     
     @property

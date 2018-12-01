@@ -28,6 +28,12 @@ class TweetCollection(object):
         else:
             raise ValueError(f'{tweet} is not a Tweet')
 
+    def extend(self, tweet_collection):
+        if isinstance(tweet_collection, TweetCollection):
+            self.tweets.extend(tweet_collection.tweets)
+        else:
+            raise ValueError(f'{tweet_collection} is not a TweetCollection')
+
     def filter_by_property(self, property_name):
         return TweetCollection(
             [t for t in self.tweets if t.__getattribute__(property_name)])
