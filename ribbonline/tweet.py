@@ -1,7 +1,7 @@
 import dateparser
 
 from . import constants
-from .util import has_emoji
+from .util import has_emoji, assert_is_instance
 
 
 class Tweet(object):
@@ -46,31 +46,23 @@ class TweetCollection(object):
         self.tweets = tweets
 
     def __add__(self, other):
-        if isinstance(other, TweetCollection):
-            return TweetCollection(self.tweets+other.tweets)
-        else:
-            raise ValueError(f'{other} is not a TweetCollection')
+        assert_is_instance(other, TweetCollection)
+        return TweetCollection(self.tweets + other.tweets)
 
     def __getitem__(self, idx):
         return self.tweets[idx]
 
     def __setitem__(self, idx, tweet):
-        if isinstance(tweet, Tweet):
-            self.tweets[idx] = tweet
-        else:
-            raise ValueError(f'{tweet} is not a Tweet')
+        assert_is_instance(tweet, Tweet)
+        self.tweets[idx] = tweet
 
     def append(self, tweet):
-        if isinstance(tweet, Tweet):
-            self.tweets.append(tweet)
-        else:
-            raise ValueError(f'{tweet} is not a Tweet')
+        assert_is_instance(tweet, Tweet)
+        self.tweets.append(tweet)
 
     def extend(self, tweet_collection):
-        if isinstance(tweet_collection, TweetCollection):
-            self.tweets.extend(tweet_collection.tweets)
-        else:
-            raise ValueError(f'{tweet_collection} is not a TweetCollection')
+        assert_is_instance(other, TweetCollection)
+        self.tweets.extend(tweet_collection.tweets)
 
     def filter_by_property(self, property_name):
         return TweetCollection(
