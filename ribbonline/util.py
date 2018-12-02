@@ -12,6 +12,8 @@ def load_credentials(filename='credentials.json'):
 
 
 def assert_is_instance(obj, cls):
+    print(obj.__class__)
+    print(cls)
     if isinstance(obj, cls):
         return True
     else:

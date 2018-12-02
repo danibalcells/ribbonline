@@ -9,7 +9,7 @@ class TweetCSVLoader(object):
         self.tweet_ids = []
         self.tweets = TweetCollection([])
 
-    def _load(filename):
+    def _load(self, filename):
         with open(filename) as f:
             reader = csv.DictReader(f)
             for line in reader:
@@ -17,7 +17,7 @@ class TweetCSVLoader(object):
                     self.tweet_ids.append(line['id'])
                     self.tweets.append(Tweet(line))
 
-    def load_multiple(filenames):
+    def load_multiple(self, filenames):
         for filename in filenames:
             self._load(filename)
         return self.tweets

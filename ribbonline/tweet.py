@@ -15,6 +15,13 @@ class Tweet(object):
         self.user_id = raw_data['user_id']
         self.date = dateparser.parse(raw_data['date'])
 
+    def __repr__(self):
+        return (f'<Tweet by "{self.username}" on {self.date.date()}: '
+                f'"{self.text[:30]}...">')
+
+    def __str__(self):
+        return f'{self.date.date()} "{self.username}": "{self.text[:30]}..."'
+
     @property
     def text_has_ribbon(self):
         return has_emoji(self.text, constants.EMOJI_RIBBON)
@@ -45,36 +52,54 @@ class TweetCollection(object):
     def __init__(self, tweets):
         self.tweets = tweets
 
+    def __iter__(self):
+        for tweet in self.tweets:
+            yield tweet
+
     def __add__(self, other):
-        assert_is_instance(other, TweetCollection)
         return TweetCollection(self.tweets + other.tweets)
 
     def __getitem__(self, idx):
         return self.tweets[idx]
 
     def __setitem__(self, idx, tweet):
-        assert_is_instance(tweet, Tweet)
         self.tweets[idx] = tweet
 
     def append(self, tweet):
-        assert_is_instance(tweet, Tweet)
         self.tweets.append(tweet)
 
     def extend(self, tweet_collection):
-        assert_is_instance(other, TweetCollection)
         self.tweets.extend(tweet_collection.tweets)
 
     def filter_by_property(self, property_name):
         return TweetCollection(
             [t for t in self.tweets if t.__getattribute__(property_name)])
 
-    def filter_by_dates(self, since, until):
-        return TweetCollection(
-            [t for t in self.tweets if t.date >= since and t.date < until])
+    def filter_by_dates(self, since=None, until=None):
+        if since and until:
+            return TweetCollection(
+                [t for t in self.tweets
+                 if t.date >= since and t.date < until])
+        elif since:
+            return TweetCollection(
+                [t for t in self.tweets
+                 if t.date >= since])
+        elif until:
+            return TweetCollection(
+                [t for t in self.tweets
+                 if t.date < until])
 
     @property
     def length(self):
         return len(self.tweets)
+
+    @property
+    def start_date(self):
+        return min([t.date for t in self.tweets])
+
+    @property
+    def end_date(self):
+        return max([t.date for t in self.tweets])
 
     @property
     def text_has_ribbon(self):
