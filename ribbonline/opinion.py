@@ -64,6 +64,20 @@ class OpinionTimeline(object):
     def list(self):
         return [opinion.list for opinion in self.daily_opinions]
 
+    def filter_by_dates(self, since=None, until=None)
+        if since and until:
+            return OpinionTimeline(
+                [o for o in self.daily_opinions
+                 if o.date >= since and o.date < until])
+        elif since:
+            return OpinionTimeline(
+                [o for o in self.daily_opinions
+                 if o.date >= since])
+        elif until:
+            return OpinionTimeline(
+                [o for o in self.daily_opinions
+                 if o.date < until])
+
 
 class OpinionController(object):
 
