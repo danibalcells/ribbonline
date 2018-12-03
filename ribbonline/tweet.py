@@ -60,7 +60,10 @@ class TweetCollection(object):
         return TweetCollection(self.tweets + other.tweets)
 
     def __getitem__(self, idx):
-        return self.tweets[idx]
+        try:
+            return self.tweets[idx]
+        except IndexError:
+            return None
 
     def __setitem__(self, idx, tweet):
         self.tweets[idx] = tweet

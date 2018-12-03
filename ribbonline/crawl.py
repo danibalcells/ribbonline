@@ -8,15 +8,15 @@ class TwitterCrawler(object):
     def __init__(self):
         self.config = twint.Config()
 
-    def _get_filename(self, query, since, until):
+    def _get_filename(self, query, since, until, language):
         timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
         return (f'crawls/'
                 f'crawl_{timestamp}_'
-                f'{since}_{until}_{query}')
+                f'{since}_{until}_{query}_{language}')
 
     def crawl(self, query, since, until, limit, language):
 
-        filename = self._get_filename(query, since, until)
+        filename = self._get_filename(query, since, until, language)
         self.config.Search = query
         self.config.Output = filename
         self.config.Since = since
