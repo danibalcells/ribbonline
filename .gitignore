@@ -1,5 +1,6 @@
 credentials.json
 crawls
+plots
 *.sw[op]
 *.pyc
 .ipynb_checkpoints/

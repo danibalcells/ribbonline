@@ -17,6 +17,7 @@ body {
 }
 
 .col-left {
+    float: left;
     position: fixed;
     left: 0;
     top: 0;
@@ -28,9 +29,19 @@ body {
 
 .story-container {
     margin: 40px;
+    margin-top: 68px;
 }
 
 .plot-container {
     height: 100%;
     margin: 40px;
+}
+
+.title-img-container: {
+    width: 90%;
+}
+
+.title-img {
+    width: 100%;
+    height: auto;
 }
