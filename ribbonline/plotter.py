@@ -23,7 +23,7 @@ COLOR_FLAG_IN_USERNAME = '#f96d6d'
 COLOR_FLAG_IN_TEXT = '#db0d0d'
 COLOR_BACKGROUND = '#242424'
 COLOR_EVENTS = '#bababa'
-PLOT_WIDTH = 800
+PLOT_WIDTH = 655
 PLOT_HEIGHT = 600
 LINE_WIDTH = 2
 LEGEND_RIBBON_IN_TEXT = f'{constants.EMOJI_RIBBON} in tweet text'
@@ -160,7 +160,7 @@ class TimelinePlotter(object):
             title="",
             plot_width=PLOT_WIDTH, 
             plot_height=PLOT_HEIGHT,
-            sizing_mode='stretch_both',
+            sizing_mode='scale_width',
             x_axis_type='datetime',
             y_range=Range1d(0, self.height, bounds='auto'),
             x_range=Range1d(

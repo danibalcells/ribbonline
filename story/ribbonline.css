@@ -7,7 +7,7 @@ body {
 }
 
 .col-plot {
-    max-height: 600px;
+    /* max-height: 600px; */
     width: 50%;
 }
 
@@ -44,4 +44,25 @@ body {
 .title-img {
     width: 100%;
     height: auto;
+}
+
+p {
+    font-family: 'Source Serif Pro', serif;
+    line-height: 1.6;
+    font-size: 14pt;
+}
+
+#title {
+    font-size: 60pt;
+    font-weight: bold;
+    font-family: 'Playfair Display', serif;
+    margin-top: 15pt;
+    margin-bottom: 0;
+    line-height: 1;
+}
+
+#subtitle {
+    font-family: 'Source Sans Pro', sans-serif;
+    color: darkgray;
+    margin-bottom: 25pt;
 }
