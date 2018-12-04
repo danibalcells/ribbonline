@@ -24,6 +24,10 @@ class EventTimeline(object):
     def __init__(self, events):
         self.events = events
 
+    def __iter__(self):
+        for e in self.events:
+            yield e
+
     @property
     def dates(self):
         return [e.date for e in self.events]

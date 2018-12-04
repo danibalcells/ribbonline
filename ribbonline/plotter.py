@@ -84,6 +84,7 @@ class TimelinePlotter(object):
                                      self.flag_in_username_val)
         self.flag_in_text_pos = (self.flag_in_username_pos +
                                  self.flag_in_text_val)
+        self._set_events_pos()
 
     def _set_labels(self):
         tweet_samples = self.timeline.sample_tweets()
@@ -153,7 +154,8 @@ class TimelinePlotter(object):
             names=[NAME_EVENTS],
             attachment='right',
         )
-        wheel_zoom = tools.WheelZoomTool(maintain_focus=False)
+        wheel_zoom = tools.WheelZoomTool(maintain_focus=False,
+                                         dimensions='width')
         p = figure(
             title="",
             plot_width=PLOT_WIDTH, 
@@ -278,12 +280,30 @@ class TimelinePlotter(object):
                            self.flag_in_text_pos,
                            COLOR_FLAG_IN_TEXT)
 
+    def _get_event_pos(self, event):
+        for (date, y0, y1) in zip(
+                self.dates, 
+                self.ribbon_in_username_pos,
+                self.neutral_pos):
+            if date == event.date:
+                return y0, y1
+
+    def _set_events_pos(self):
+        self.events_y0_pos = []
+        self.events_y1_pos = []
+        for e in event.EVENTS:
+            y0, y1 = self._get_event_pos(e)
+            self.events_y0_pos.append(y0)
+            self.events_y1_pos.append(y1)
+
     def _add_events(self):
         events_source = ColumnDataSource(data=dict(
             x0=event.EVENTS.dates,
             x1=event.EVENTS.dates,
-            y0=np.zeros_like(event.EVENTS.dates),
-            y1=self.height*np.ones_like(event.EVENTS.dates),
+            y0=self.events_y0_pos,
+            #  y0=np.zeros_like(event.EVENTS.dates),
+            y1=self.events_y1_pos,
+            #  y1=self.height*np.ones_like(event.EVENTS.dates),
             date_label=event.EVENTS.date_labels,
             description=event.EVENTS.descriptions,
         ))
