@@ -155,7 +155,9 @@ class TimelinePlotter(object):
         )
         p = figure(
             title="",
-            plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT,
+            plot_width=PLOT_WIDTH, 
+            plot_height=PLOT_HEIGHT,
+            sizing_mode='stretch_both',
             x_axis_type='datetime',
             y_range=Range1d(0, self.height, bounds='auto'),
             x_range=Range1d(
