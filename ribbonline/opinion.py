@@ -1,4 +1,5 @@
 import datetime
+import numpy as np
 
 from .util import assert_is_instance
 
@@ -44,8 +45,8 @@ class DailyOpinionSplit(object):
     def sample(self):
         return [
             self.tweets.text_has_ribbon[0],
-            self.tweets.username_has_ribbon[1],
-            self.tweets.username_has_flag[1],
+            self.tweets.username_has_ribbon[2],
+            self.tweets.username_has_flag[2],
             self.tweets.text_has_flag[0]
         ]
 

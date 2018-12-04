@@ -6,26 +6,35 @@ from functools import partial
 import matplotlib.pyplot as plt
 import numpy as np
 from bokeh import events
-from bokeh.plotting import figure, output_file, show, ColumnDataSource
+from bokeh.plotting import figure, output_file, show
 from bokeh.models import tools, Range1d, Legend, CustomJS, ColumnDataSource
 from bokeh.models.glyphs import Patch
+from bokeh.models.annotations import Title
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 
-from . import constants
+from . import constants, event
 
 
+TITLE = 'Exploring the Emoji Divide in Catalonia'
 COLOR_RIBBON_IN_TEXT = '#f2ce1a'
 COLOR_RIBBON_IN_USERNAME = '#ffe251'
 COLOR_FLAG_IN_USERNAME = '#f96d6d'
 COLOR_FLAG_IN_TEXT = '#db0d0d'
 COLOR_BACKGROUND = '#242424'
+COLOR_EVENTS = '#bababa'
 PLOT_WIDTH = 800
 PLOT_HEIGHT = 600
+LINE_WIDTH = 2
 LEGEND_RIBBON_IN_TEXT = f'{constants.EMOJI_RIBBON} in tweet text'
 LEGEND_RIBBON_IN_USERNAME = f'{constants.EMOJI_RIBBON} in username'
 LEGEND_FLAG_IN_USERNAME = f'{constants.EMOJI_FLAG} in username'
 LEGEND_FLAG_IN_TEXT = f'{constants.EMOJI_FLAG} in tweet text'
+NAME_RIBBON_IN_TEXT = 'ribbon_in_text'
+NAME_RIBBON_IN_USERNAME = 'ribbon_in_username'
+NAME_FLAG_IN_USERNAME = 'flag_in_username'
+NAME_FLAG_IN_TEXT = 'flag_in_text'
+NAME_EVENTS = 'events'
 
 
 FIGURE = None
@@ -123,24 +132,46 @@ class TimelinePlotter(object):
 
 
     def _init_figure(self):
-        hover = tools.HoverTool(
+        hover_lines = tools.HoverTool(
             tooltips=[
                 ('Date', '@date_label'),
                 ('Daily total', '@daily_total'),
                 ('User', '@username'),
                 ('Tweet', '@text')],
-            attachment='right')
+            names=[
+                NAME_RIBBON_IN_TEXT,
+                NAME_RIBBON_IN_USERNAME,
+                NAME_FLAG_IN_USERNAME,
+                NAME_FLAG_IN_TEXT
+            ],
+            attachment='right',
+        )
+        hover_events = tools.HoverTool(
+            tooltips=[
+                ('Date', '@date_label'),
+                ('Event', '@description')],
+            names=[NAME_EVENTS],
+            attachment='right',
+        )
         p = figure(
-            title="", plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT,
+            title="",
+            plot_width=PLOT_WIDTH, plot_height=PLOT_HEIGHT,
             x_axis_type='datetime',
             y_range=Range1d(0, self.height, bounds='auto'),
             x_range=Range1d(
                 self.timeline.start_date,
                 self.timeline.end_date, bounds='auto'),
             tools=[
-                hover, tools.BoxZoomTool(), tools.PanTool(), 'wheel_zoom',
-                tools.ResetTool(), tools.SaveTool(), tools.UndoTool(),
-                tools.RedoTool()])
+                hover_events, hover_lines,
+                tools.BoxZoomTool(), tools.PanTool(), 'wheel_zoom',
+                tools.ResetTool()]
+        )
+        p.title = Title(
+            text='Double-tap to toggle legend',
+            text_font_style='italic',
+            align='right',
+            text_font_size='8pt',
+        )
         p.background_fill_color = COLOR_BACKGROUND
         p.min_border = 75
         p.toolbar.autohide = True
@@ -189,31 +220,33 @@ class TimelinePlotter(object):
         flag_in_text_line = self.p.line(
             'x', 'y', source=flag_in_text_source,
             line_color=COLOR_FLAG_IN_TEXT,
+            line_width=LINE_WIDTH,
+            name=NAME_FLAG_IN_TEXT,
             legend=LEGEND_FLAG_IN_TEXT)
         flag_in_username_line = self.p.line(
             'x', 'y', source=flag_in_username_source,
             line_color=COLOR_FLAG_IN_USERNAME,
+            line_width=LINE_WIDTH,
+            name=NAME_FLAG_IN_USERNAME,
             legend=LEGEND_FLAG_IN_USERNAME)
         ribbon_in_username_line = self.p.line(
             'x', 'y', source=ribbon_in_username_source,
             line_color=COLOR_RIBBON_IN_USERNAME,
+            line_width=LINE_WIDTH,
+            name=NAME_RIBBON_IN_USERNAME,
             legend=LEGEND_RIBBON_IN_USERNAME)
         ribbon_in_text_line = self.p.line(
             'x', 'y', source=ribbon_in_text_source,
             line_color=COLOR_RIBBON_IN_TEXT,
+            line_width=LINE_WIDTH,
+            name=NAME_RIBBON_IN_TEXT,
             legend=LEGEND_RIBBON_IN_TEXT)
-        #  self.p.legend.visible = False
-        #  legends = [
-            #  (LEGEND_FLAG_IN_TEXT, [flag_in_text_line]),
-            #  (LEGEND_FLAG_IN_USERNAME, [flag_in_username_line]),
-            #  (LEGEND_RIBBON_IN_USERNAME, [ribbon_in_username_line]),
-            #  (LEGEND_RIBBON_IN_TEXT, [ribbon_in_text_line]),
-        #  ]
-        #  legend = Legend(items=legends, location=(0, -80),
-                        #  orientation='horizontal')
-        #  self.p.add_layout(legend)
-        self.p.legend.location = 'bottom_right'
-        self.p.legend.background_fill_alpha = 0.9
+        def show_hide_legend(legend=self.p.legend[0]):
+            legend.visible = not legend.visible
+        self.p.js_on_event(events.DoubleTap,
+                        CustomJS.from_py_func(show_hide_legend))
+        self.p.legend.visible = False
+        self.p.legend.background_fill_alpha = 0.95
 
     def _fill_between(self, bottom, top, color):
         data_source = ColumnDataSource(data=dict(
@@ -239,8 +272,25 @@ class TimelinePlotter(object):
                            self.flag_in_text_pos,
                            COLOR_FLAG_IN_TEXT)
 
+    def _add_events(self):
+        events_source = ColumnDataSource(data=dict(
+            x0=event.EVENTS.dates,
+            x1=event.EVENTS.dates,
+            y0=np.zeros_like(event.EVENTS.dates),
+            y1=self.height*np.ones_like(event.EVENTS.dates),
+            date_label=event.EVENTS.date_labels,
+            description=event.EVENTS.descriptions,
+        ))
+        self.p.segment(x0='x0', x1='x1', y0='y0', y1='y1',
+                       source=events_source,
+                       line_width=1, line_alpha=0.5,
+                       color=COLOR_EVENTS,
+                       name=NAME_EVENTS)
+
+
     def generate_visualization(self):
         self._init_figure()
+        self._add_events()
         self._add_lines()
         self._add_fills()
         self.vis_generated = True
