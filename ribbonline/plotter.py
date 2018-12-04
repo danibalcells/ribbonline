@@ -175,9 +175,9 @@ class TimelinePlotter(object):
             text_font_size='8pt',
         )
         p.background_fill_color = COLOR_BACKGROUND
-        p.min_border = 75
+        #  p.min_border = 75
         p.toolbar.autohide = True
-        p.toolbar_location = 'left'
+        p.toolbar_location = 'below'
         p.yaxis.ticker = []
         p.xgrid.grid_line_color = None
         p.ygrid.grid_line_color = None

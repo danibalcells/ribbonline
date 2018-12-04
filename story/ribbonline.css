@@ -1,28 +1,36 @@
-html, body, .col1, .col2 {
-  height: 100%;
+html, body, #main, .col-left, .col-right {
+    height: 100%;
 }
 
 body {
-  margin: 0;
+    margin: 0;
 }
 
-.col1, .col2 {
-  width: 50%;
+.col-plot {
+    max-height: 600px;
+    width: 50%;
 }
 
-.col1 {
-  position: fixed;
-  left: 0;
-  top: 0;
+.col-story {
+    overflow: auto;
+    width: 50%;
 }
 
-.col2 {
-  float: right;
-  overflow: auto;
+.col-left {
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 
-.story-container{
-  margin-top: 50px;
-  margin-bottom: 50px;
-  margin-right: 10%;
+.col-right {
+    float: right;
+}
+
+.story-container {
+    margin: 40px;
+}
+
+.plot-container {
+    height: 100%;
+    margin: 40px;
 }
