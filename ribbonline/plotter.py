@@ -153,6 +153,7 @@ class TimelinePlotter(object):
             names=[NAME_EVENTS],
             attachment='right',
         )
+        wheel_zoom = tools.WheelZoomTool(maintain_focus=False)
         p = figure(
             title="",
             plot_width=PLOT_WIDTH, 
@@ -164,12 +165,15 @@ class TimelinePlotter(object):
                 self.timeline.start_date,
                 self.timeline.end_date, bounds='auto'),
             tools=[
-                hover_events, hover_lines,
-                tools.BoxZoomTool(), tools.PanTool(), 'wheel_zoom',
-                tools.ResetTool()]
+                hover_events, hover_lines, 'box_zoom',
+                wheel_zoom, 'pan', 'reset'],
+            active_drag='pan',
+            active_scroll=wheel_zoom,
         )
         p.title = Title(
-            text='Double-tap to toggle legend',
+            text=('Explore by scrolling and dragging. '
+                  'Hover to see tweets and events. '
+                  'Double-tap to toggle legend.'),
             text_font_style='italic',
             align='right',
             text_font_size='8pt',
