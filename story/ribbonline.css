@@ -78,3 +78,17 @@ p {
     font-family: 'Playfair Display', serif;
     font-style: italic;
 }
+
+hr {
+    width: 80%;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+p.emphasize-first-letter::first-letter{
+    font-family: 'Playfair Display', serif;
+    font-family: 'Playfair Display', serif;
+    font-weight: bold;
+    font-size: 200%;
+    font-style: italic;
+}
