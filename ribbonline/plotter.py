@@ -35,6 +35,10 @@ NAME_RIBBON_IN_USERNAME = 'ribbon_in_username'
 NAME_FLAG_IN_USERNAME = 'flag_in_username'
 NAME_FLAG_IN_TEXT = 'flag_in_text'
 NAME_EVENTS = 'events'
+NAME_EVENTS_RIGHT = 'events_right'
+NAME_EVENTS_LEFT = 'events_left'
+INITIAL_START_DATE = datetime.datetime(2017, 9, 1)
+INITIAL_END_DATE = datetime.datetime(2017, 11, 1)
 
 
 FIGURE = None
@@ -133,7 +137,7 @@ class TimelinePlotter(object):
 
 
     def _init_figure(self):
-        hover_lines = tools.HoverTool(
+        hover_ribbon_lines = tools.HoverTool(
             tooltips=[
                 ('Date', '@date_label'),
                 ('Daily total', '@daily_total'),
@@ -142,33 +146,60 @@ class TimelinePlotter(object):
             names=[
                 NAME_RIBBON_IN_TEXT,
                 NAME_RIBBON_IN_USERNAME,
-                NAME_FLAG_IN_USERNAME,
-                NAME_FLAG_IN_TEXT
             ],
-            attachment='right',
+            attachment='below',
         )
-        hover_events = tools.HoverTool(
+        hover_flag_lines = tools.HoverTool(
             tooltips=[
                 ('Date', '@date_label'),
-                ('Event', '@description')],
-            names=[NAME_EVENTS],
-            attachment='right',
+                ('Daily total', '@daily_total'),
+                ('User', '@username'),
+                ('Tweet', '@text')],
+            names=[
+                NAME_FLAG_IN_USERNAME,
+                NAME_FLAG_IN_TEXT,
+            ],
+            attachment='below',
+        )
+        hover_events_left = tools.HoverTool(
+            tooltips=[
+                ('Date', '@date_label'),
+                ('Event', '@description')
+            ],
+            names=[NAME_EVENTS_LEFT],
+            attachment='above',
+        )
+        hover_events_right = tools.HoverTool(
+            tooltips=[
+                ('Date', '@date_label'),
+                ('Event', '@description')
+            ],
+            names=[NAME_EVENTS_RIGHT],
+            attachment='above',
         )
         wheel_zoom = tools.WheelZoomTool(maintain_focus=False,
-                                         dimensions='width')
+                                         dimensions='height')
         p = figure(
             title="",
             plot_width=PLOT_WIDTH, 
             plot_height=PLOT_HEIGHT,
-            sizing_mode='scale_width',
-            x_axis_type='datetime',
-            y_range=Range1d(0, self.height, bounds='auto'),
+            sizing_mode='stretch_both',
+            y_axis_type='datetime',
             x_range=Range1d(
-                self.timeline.start_date,
-                self.timeline.end_date, bounds='auto'),
+                self.height,
+                0,
+                bounds='auto'),
+            y_range=Range1d(
+                INITIAL_END_DATE,
+                INITIAL_START_DATE,
+                bounds=(
+                    self.timeline.start_date,
+                    self.timeline.end_date, 
+                )),
             tools=[
-                hover_events, hover_lines, 'box_zoom',
-                wheel_zoom, 'pan', 'reset'],
+                hover_ribbon_lines, hover_flag_lines,
+                hover_events_left, hover_events_right,
+                'box_zoom', wheel_zoom, 'pan', 'reset'],
             active_drag='pan',
             active_scroll=wheel_zoom,
         )
@@ -183,16 +214,16 @@ class TimelinePlotter(object):
         p.background_fill_color = COLOR_BACKGROUND
         #  p.min_border = 75
         p.toolbar.autohide = True
-        p.toolbar_location = 'below'
-        p.yaxis.ticker = []
+        p.toolbar_location = None
+        p.xaxis.ticker = []
         p.xgrid.grid_line_color = None
         p.ygrid.grid_line_color = None
         self.p = p
 
     def _add_lines(self):
         ribbon_in_text_source = ColumnDataSource(data=dict(
-            x=self.dates,
-            y=self.ribbon_in_text_pos,
+            y=self.dates,
+            x=self.ribbon_in_text_pos,
             text=self.ribbon_in_text_texts,
             username=self.ribbon_in_text_usernames,
             date_label=self.date_labels,
@@ -200,8 +231,8 @@ class TimelinePlotter(object):
         ))
 
         ribbon_in_username_source = ColumnDataSource(data=dict(
-            x=self.dates,
-            y=self.ribbon_in_username_pos,
+            y=self.dates,
+            x=self.ribbon_in_username_pos,
             text=self.ribbon_in_username_texts,
             username=self.ribbon_in_username_usernames,
             date_label=self.date_labels,
@@ -209,8 +240,8 @@ class TimelinePlotter(object):
         ))
 
         flag_in_username_source = ColumnDataSource(data=dict(
-            x=self.dates,
-            y=self.neutral_pos,
+            y=self.dates,
+            x=self.neutral_pos,
             text=self.flag_in_username_texts,
             username=self.flag_in_username_usernames,
             date_label=self.date_labels,
@@ -218,8 +249,8 @@ class TimelinePlotter(object):
         ))
 
         flag_in_text_source = ColumnDataSource(data=dict(
-            x=self.dates,
-            y=self.flag_in_username_pos,
+            y=self.dates,
+            x=self.flag_in_username_pos,
             text=self.flag_in_text_texts,
             username=self.flag_in_text_usernames,
             date_label=self.date_labels,
@@ -258,8 +289,8 @@ class TimelinePlotter(object):
 
     def _fill_between(self, bottom, top, color):
         data_source = ColumnDataSource(data=dict(
-            x=np.hstack((self.dates, np.flip(self.dates))),
-            y=np.hstack((bottom, np.flip(top)))
+            y=np.hstack((self.dates, np.flip(self.dates))),
+            x=np.hstack((bottom, np.flip(top)))
         ))
 
         glyph = Patch(x='x', y='y', fill_color=color, line_alpha=0.0)
@@ -281,37 +312,54 @@ class TimelinePlotter(object):
                            COLOR_FLAG_IN_TEXT)
 
     def _get_event_pos(self, event):
-        for (date, y0, y1) in zip(
-                self.dates, 
+        for (date, pos0, pos1) in zip(
+                self.dates,
                 self.ribbon_in_username_pos,
                 self.neutral_pos):
             if date == event.date:
-                return y0, y1
+                return pos0, pos1
 
     def _set_events_pos(self):
-        self.events_y0_pos = []
-        self.events_y1_pos = []
+        self.events_pos0_pos = []
+        self.events_pos1_pos = []
+        self.events_midpoints = []
         for e in event.EVENTS:
-            y0, y1 = self._get_event_pos(e)
-            self.events_y0_pos.append(y0)
-            self.events_y1_pos.append(y1)
+            pos0, pos1 = self._get_event_pos(e)
+            self.events_pos0_pos.append(pos0)
+            self.events_pos1_pos.append(pos1)
+            self.events_midpoints.append((pos0 + pos1) / 2.0)
 
     def _add_events(self):
         events_source = ColumnDataSource(data=dict(
-            x0=event.EVENTS.dates,
-            x1=event.EVENTS.dates,
-            y0=self.events_y0_pos,
+            y0=event.EVENTS.dates,
+            y1=event.EVENTS.dates,
+            x0=self.events_pos0_pos,
             #  y0=np.zeros_like(event.EVENTS.dates),
-            y1=self.events_y1_pos,
+            x1=self.events_pos1_pos,
             #  y1=self.height*np.ones_like(event.EVENTS.dates),
+            midpoints=self.events_midpoints,
             date_label=event.EVENTS.date_labels,
             description=event.EVENTS.descriptions,
         ))
         self.p.segment(x0='x0', x1='x1', y0='y0', y1='y1',
                        source=events_source,
-                       line_width=1, line_alpha=0.5,
+                       line_width=2, line_alpha=0.5,
                        color=COLOR_EVENTS,
                        name=NAME_EVENTS)
+        self.p.scatter(x='x0', y='y0',
+                       source=events_source,
+                       fill_color=COLOR_EVENTS,
+                       fill_alpha=0,
+                       line_alpha=0,
+                       size=3,
+                       name=NAME_EVENTS_LEFT)
+        self.p.scatter(x='x1', y='y0',
+                       source=events_source,
+                       fill_color=COLOR_EVENTS,
+                       fill_alpha=0,
+                       line_alpha=0,
+                       size=3,
+                       name=NAME_EVENTS_RIGHT)
 
 
     def generate_visualization(self):

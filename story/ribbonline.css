@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Playfair+Display:400,900|Source+Sans+Pro|Source+Serif+Pro);
+@import url(https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,900|Source+Sans+Pro|Source+Serif+Pro);
 
 html, body, #main, .col-left, .col-right {
     height: 100%;
@@ -9,7 +9,7 @@ body {
 }
 
 .col-plot {
-    max-height: 600px;
+    height: 100%;
     width: 50%;
 }
 
@@ -32,11 +32,11 @@ body {
 .story-container {
     margin: 40px;
     margin-top: 68px;
+    margin-right: 70px;
 }
 
 .plot-container {
     height: 100%;
-    margin: 40px;
 }
 
 .title-img-container: {
@@ -48,6 +48,11 @@ body {
     height: auto;
 }
 
+.bk-tooltip
+{
+    max-width: 250px;
+    overflow: auto;
+}
 p {
     font-family: 'Source Serif Pro', serif;
     line-height: 1.6;
@@ -66,5 +71,10 @@ p {
 #subtitle {
     font-family: 'Source Sans Pro', sans-serif;
     color: darkgray;
-    margin-bottom: 25pt;
+    margin-bottom: 35pt;
+}
+
+#teaser {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
 }
