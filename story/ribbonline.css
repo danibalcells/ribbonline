@@ -55,7 +55,7 @@ body {
 }
 p {
     font-family: 'Source Serif Pro', serif;
-    line-height: 1.6;
+    line-height: 1.9;
     font-size: 14pt;
 }
 
@@ -71,18 +71,20 @@ p {
 #subtitle {
     font-family: 'Source Sans Pro', sans-serif;
     color: darkgray;
-    margin-bottom: 35pt;
+    margin-bottom: 45px;
 }
 
 #teaser {
     font-family: 'Playfair Display', serif;
     font-style: italic;
+    border-top: 45px;
+    border-bottom: 45px;
 }
 
 hr {
     width: 80%;
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 p.emphasize-first-letter::first-letter{
