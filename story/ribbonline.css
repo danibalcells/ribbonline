@@ -48,6 +48,25 @@ body {
     height: auto;
 }
 
+.body-img-wrapper {
+    width: 90%;
+    margin: auto;
+    text-align: center;
+}
+
+.body-img-landscape {
+    text-align: center;
+    width: 100%;
+    height: auto;
+}
+
+.body-img-portrait {
+    max-height: 600px;
+    height: 100%;
+    width: auto;
+    text-align: center;
+}
+
 .bk-tooltip
 {
     max-width: 250px;

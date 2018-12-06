@@ -4,3 +4,4 @@ plots
 *.sw[op]
 *.pyc
 .ipynb_checkpoints/
+*.DS_Store
