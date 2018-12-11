@@ -114,8 +114,8 @@ hr {
 
 p.emphasize-first-letter::first-letter{
     font-family: 'Playfair Display', serif;
-    font-family: 'Playfair Display', serif;
     font-weight: bold;
     font-size: 200%;
     font-style: italic;
+    line-height: 0.95;
 }
