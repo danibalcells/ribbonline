@@ -78,6 +78,11 @@ p {
     font-size: 14pt;
 }
 
+#title-invisible {
+    visibility: hidden;
+    display: none;
+}
+
 #title {
     font-size: 60pt;
     font-weight: bold;
