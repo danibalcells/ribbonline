@@ -79,7 +79,7 @@ twint==1.2.0.0
 twitterscraper==0.9.3
 TwitterSearch==1.0.2
 tzlocal==1.5.1
-urllib3==1.24.1
+urllib3==1.24.2
 urwid==2.0.1
 wcwidth==0.1.7
 webencodings==0.5.1
